@@ -60,17 +60,17 @@ Do not modify the project after the exam has finished.
 - $S_{J3} = S_{>0} + 3 S_1 - 3 S_2 + S_3$
 
 > Quickly estimate the asymptotic richness of the forest using the jackknife estimators and the rules of @Brose2003.
->
-> A\) S_1 = 20 \< 100/3\$, so Jackknife 1 is valid (sample coverage $>74\%$).
-> Estimated richness is $S_{J1} = 100 + 20 = 120$ species.
->
-> B\) S_1 = 30 \\ge 80/3\$, so Jackknife 1 is invalid.
-> Jackknife 2 gives $S_{J2} = 80 + 2(30) - 20 = 120$ species (sample coverage $= 80/120 = 66.7\%$, falling within the 50–74% range for Jackknife 2).
-> Estimated richness is $120$ species.
->
-> C\) Jackknife 2 gives S\_{J2} = 150 + 2(110) - 30 = 340\$ species (sample coverage $= 150/340 = 44.1\%$, falling within the 38–50% range for Jackknife 3).
-> Using Jackknife 3 gives $S_{J3} = 150 + 3(110) - 3(30) + 10 = 400$ species.
-> Estimated richness is $400$ species
+
+A\) S_1 = 20 \< 100/3, so Jackknife 1 is valid (sample coverage \>74%).
+Estimated richness is S_J1 = 100 + 20 = 120 species.
+
+B\) S_1 = 30 ≥ 80/3, so Jackknife 1 is invalid.
+Jackknife 2 gives S_J2 = 80 + 2\*30 - 20 = 120 species (sample coverage = 80/120 = 66.7%, falling within the 50–74% range for Jackknife 2).
+Estimated richness is 120 species.
+
+C\) Jackknife 2 gives S_J2 = 150 + 2\*(110) - 30 = 340 species (sample coverage = 150/340 = 44.1\\%, falling within the 38–50% range for Jackknife 3).
+Using Jackknife 3 gives S_J3 = 150 + 3\*110 - 3\*30 + 10 = 400 species.
+Estimated richness is 400 species
 
 ## Phylogenetic diversity
 
@@ -88,28 +88,29 @@ tree_3sp(0.5)
 ```
 
 > What is the order-0 phylogenetic diversity (Faith's PD) of a community containing the three species, whose phylogenetic tree is shown in the figure?
-> Faith's PD is 2.5 (calculated as 1+0.5+0.5+0.5).
+
+Faith's PD is 2.5 (calculated as 1+0.5+0.5+0.5).
 
 > What is the possible range of values for `h`?
->
-> The divergence height $h$ lies in the range 0 **≤** h **≤** 1
+
+The divergence height h lies in the range 0 **≤** h **≤** 1
 
 > What effect does `h` have on the value of PD?
->
-> Increasing h increases the shared evolutionary history between species A and B, which decreases unshared branch lengths (1-h) and thereby reduces total phylogenetic diversity PD.
+
+Increasing h increases the shared evolutionary history between species A and B, which decreases unshared branch lengths (1-h) and thereby reduces total phylogenetic diversity PD.
 
 > Express the value of PD in terms of `h`.
->
-> PD = 1 + h + (1 - h) + (1 - h) = 3 - h
+
+PD = 1 + h + (1 - h) + (1 - h) = 3 - h
 
 > What is the richness (taxonomic, not phylogenetic) of the community?
 > Explain how $h$ allows us to take into account the closeness between species B and A.
->
-> Increasing h increases the shared evolutionary history between species A and B, which decreases unshared branch lengths (1-h) and thereby reduces total phylogenetic diversity PD.
+
+Increasing h increases the shared evolutionary history between species A and B, which decreases unshared branch lengths (1-h) and thereby reduces total phylogenetic diversity PD.
 
 > If botanists disagree on whether species B and A are synonymous and a phylogeny shows that their distance $h$ is small, suggest a method to help them reach agreement.
->
-> Use phylogenetic or functional diversity measures instead of raw taxonomic richness: when h is close to 1, species A and B contribute nearly as a single species to total community diversity, making their taxonomic status practically immaterial for diversity assessments.
+
+Use phylogenetic or functional diversity measures instead of raw taxonomic richness: when h is close to 1, species A and B contribute nearly as a single species to total community diversity, making their taxonomic status practically immaterial for diversity assessments.
 
 ## Lognormal distribution
 
@@ -152,38 +153,51 @@ autoplot(comm_lnorm)
 ```
 
 > What is the species richness of the observed communities?
-> The observed species richness is 100 species for both communities.
+
+The observed species richness is 100 species for both communities.
 
 > What is the abundance of the rarest species (approximately, as read from the plot) compared to the total number of trees?
->
-> For sigma = 1, the rarest species has an abundance of approximately 10\^2 = 100 trees out of 10\^6 (0.01%).
-> For sigma = 2, the rarest species has an abundance of approximately 1 tree out of 10\^6 (0.0001%).
+
+For sigma = 1, the rarest species has an abundance of approximately 1e+03 trees out of 10\^6 (0.01%).
+For sigma = 2, the rarest species has an abundance of approximately 10 tree out of 10\^6 (0.001%).
 
 > What do we observe for a sample of reasonable size, say 6.25 ha with 600 trees per hectare?
 > Draw the figure.
 > Be careful not to overwrite the `comm_lnorm` variable when reusing the code.
->
-> A sample of 3,750 trees (6.25 \* 600) misses many rare species due to sampling truncation.
-> The community with sigma = 2 suffers greater loss of observed species richness than sigma = 1 due to its lower evenness and higher proportion of extremely rare species.
->
-> ```{r}
->
->
-> ```
->
-> ```{r}
->
->
-> ```
+
+A sample of 3,750 trees (6.25 \* 600) misses many rare species due to sampling truncation.
+The community with sigma = 2 suffers greater loss of observed species richness than sigma = 1 due to its lower evenness and higher proportion of extremely rare species.
 
 ```{r}
-
+comm_sample <- rcommunity(
+  1,
+  size = 3750,
+  abd = as.numeric(comm_lnorm %>% filter(site == "sigma = 1"))
+) %>%
+  mutate(site = "sigma = 1") %>%
+  bind_rows(
+    rcommunity(
+      1,
+      size = 3750,
+      abd = as.numeric(comm_lnorm %>% filter(site == "sigma = 2"))
+    ) %>%
+      mutate(site = "sigma = 2")
+  )
+autoplot(comm_sample)
 ```
 
 > Plot the diversity profile of the two communities
 
+```{r}
+profile_hill(comm_lnorm) %>%
+  autoplot()
+```
+
 > Which community is the most diverse?
 > Explain this in relation to the value of $\sigma$.
+
+Neither community is universally more diverse because their diversity profiles cross.
+Both communities have identical species richness (S = 100) at q = 0, but for q \> 0, sigma = 1 is more diverse because a smaller standard deviation sigma corresponds to greater species evenness, whereas sigma = 2 creates stronger dominance and lower evenness.
 
 ## Pielou (1972)
 
@@ -217,7 +231,11 @@ pielou_1972
 
 > How many species of aphids are there?
 
+There are 10 aphid species
+
 > How many different plants are there?
+
+There are 12 different Solidago plant species.
 
 *Given the experimental protocol (all species studied are in the data; there are no unobserved species), diversity will always be calculated at the sample level: the argument* `estimator = "naive"` *will be used systematically.*
 
@@ -225,25 +243,67 @@ pielou_1972
 
 > Count the number of aphid species on each plant.
 
+```{r}
+div_richness(pielou_1972, estimator = "naive")
+```
+
 > What is the maximum species richness?
+
+The maximum species richness is 8 aphid species (observed on Solidago canadensis, Solidago nemoralis, and Solidago juncea).
 
 > Calculate Simpson's diversity (not entropy).
 
+```{r}
+div_hill(pielou_1972, q = 2, estimator = "naive")
+```
+
 > Which plant is the most diverse according to Simpson's measure?
+
+*Solidago juncea* is the most diverse plant according to Simpson's measure \^2D ≈ 4.88 effective species).
 
 > Plot the diversity profiles of all *Solidago* species.
 
+```{r}
+profile_hill(pielou_1972, estimator = "naive") %>%
+  autoplot()
+```
+
 > Which plant appears to be the most diverse, regardless of the order of diversity?
+
+*Solidago juncea* appears to be the most diverse plant overall
 
 > Check whether the curves intersect for $q>2$.
 
+```{r}
+profile_hill(
+  pielou_1972,
+  orders = seq(2, 5, by = 0.1),
+  estimator = "naive"
+) %>%
+  autoplot()
+```
+
+Yes, the curves intersect for q \> 2 (for instance, the profile of *Solidago gigantea* crosses above *Solidago juncea* at q ≈ 2.6
+
 > Two profiles are flat.
 > Explain why.
+
+A profile is flat when a plant species hosts only 1 aphid species (such as *Solidago ohioensis*).
+When richness equals 1, diversity equals 1 effective species for all orders q.
 
 > Partition the diversity.
 > Summarise this partitioning in one or a few sentences.
 > Caution: because of a bug in the published version of package divent, you can't use argument `estimator = "naive"` in the `div_part()` function.
 > Partition the asymptotic diversity with its default estimator.
+
+```{r}
+div_part(pielou_1972)
+```
+
+Diversity is partitioned multiplicatively as gamma = alpha \* beta.
+Total aphid species diversity across all plants (gamma) is the product of the average aphid diversity per plant habitat (alpha) and the effective number of distinct plant habitats (beta).
+
+The gamma diversity is 6.44, the alpha diversity is 3.75, and the beta diversity is 1.72.
 
 ### Niche width
 
@@ -289,15 +349,30 @@ pielou_niches
 > Which aphid species is the most generalist?
 > What proportion of habitats does it occupy?
 
+Dactynotus pieloui is the most generalist aphid species, occupying 10 out of 12 plant habitats (83.3%).
+
 > Which species is the most specialist?
+
+Dactynotus solirostratus is the most specialist aphid species, occupying only 1 habitat (Solidago flexicaulis).
 
 *The diversity of occupied habitats can take abundance into account.*
 
 > Plot the aphid diversity profiles and establish the link between the actual number of *Soledago* plants and niche width.
 
+```{r}
+profile_hill(pielou_niches, estimator = "naive") %>%
+  autoplot()
+
+```
+
+The order-0 diversity (q = 0) equals the observed number of *Solidago* species occupied by an aphid, providing an unweighted measure of niche width.
+Higher orders (q = 1, 2) account for relative aphid abundance across plant species, producing an effective number of habitats that decreases with habitat preference or uneven utilization.
+
 > Pielou focuses solely on Shannon entropy in her article, using an archaic form known as the Brillouin formula, which makes the article very difficult to read.
 > @Levins1968 was the first to propose measuring niche width in this way, suggesting two metrics: $-\sum_i{p_i \log(p_i)}$ and $\sum_i{\frac{1}{p_i^2}}$, where $p_i$ is the probability that an aphid is found in habitat $i$.
 > Identify these two metrics.
+
+The first metric is Shannon's entropy, and the second metric is Simpson's diversity, corresponding to Levins' measure of niche breadth.
 
 ### Niche overlap
 
@@ -306,4 +381,9 @@ pielou_niches
 > What measure reflects niche overlap?
 > Give its value for $q = 1$.
 
-# 
+Gamma diversity, calculated on the joint aphid-habitat matrix, reflects niche overlap.
+For q = 1, the value of gamma-diversity is obtained with:
+
+```{r}
+div_hill(pielou_niches, q = 1, estimator = "naive")
+```
